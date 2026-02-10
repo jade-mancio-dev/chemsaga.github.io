@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CHEMSAGA — Multiplayer Modes</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Page CSS + cache-bust -->
+  <link rel="stylesheet" href="./assets/css/multi.css?v=2025-11-06-a2" />
+  <link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+</head>
+<body>
+  <div class="wrap">
+    <div class="rooms-panel">
+      <!-- Header -->
+      <div class="panel-header">
+        <div class="header-left">
+          <div class="logo-row">
+            <a href="scene2.html" class="logo-link" aria-label="Back to main menu">
+              <div class="cube-embed" style="--cube-size:42px;">
+                <div class="scene">
+                  <div class="cube">
+                    <div class="spinner" style="animation:none">
+                      <div class="face front"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="panel-title">Multiplayer Modes</div>
+              </div>
+            </a>
+          </div>
+          
+        </div>
+
+        <div class="header-actions">
+          <button class="back-btn" id="backBtn" title="Back to Menu" aria-label="Back to Menu" type="button">
+            <i class="fa-solid fa-reply"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2 columns -->
+      <div class="rooms-inner">
+        <!-- LEFT -->
+        <div class="rooms-left">
+          <div class="selected-row" aria-live="polite">
+            <div class="selected-label">Selected: <strong id="selectedModeLabel">Multiplayer Mode</strong></div>
+          </div>
+
+          <div class="mode-area" role="region" aria-label="Multiplayer mode selector">
+            <div class="mode-nav">
+              <button class="nav-btn" id="navLeft" title="Previous mode" aria-label="Previous mode">&larr;</button>
+            </div>
+
+            <div class="mode-viewport" id="modeViewport">
+              <div class="modes" id="modesRow"></div>
+            </div>
+
+            <div class="mode-nav">
+              <button class="nav-btn" id="navRight" title="Next mode" aria-label="Next mode">&rarr;</button>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn" id="btn-choose">CREATE</button>
+          </div>
+
+          <div class="rooms-list" id="roomsList" aria-live="polite"></div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="rooms-right">
+          <div class="right-card" role="region" aria-label="Social and Profile">
+            <!-- Profile toggle (opens modal) -->
+            <div class="profile-slot" id="profileToggle" role="button" aria-haspopup="dialog" aria-controls="profileModal" title="Open profile">
+              <img src="./assets/img/c4.png" alt="Avatar" class="profile-pic" id="miniAvatar">
+              <div class="player-name" id="miniName">Loading...</div>
+            </div>
+
+            <div class="panel-body-right">
+              <!-- Online Players -->
+              <div class="panel-panel" id="panelPlayers">
+                <div class="panel-header-row" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+                  <div style="font-weight:700;"><i class="fa-solid fa-user-group"></i> Online Players</div>
+                  <div style="font-size:13px;color:rgba(255,255,255,0.8)">Online: <span id="onlineCount">0</span></div>
+                </div>
+                <div class="players-list" id="playersList"></div>
+              </div>
+
+              <!-- Friends (placeholder) -->
+              <div class="panel-panel" id="panelFriends" style="display:none">
+                <div style="font-weight:700;padding:8px 0">Friend List</div>
+                <div class="friends-list" id="friendsList"></div>
+              </div>
+
+              <!-- Add Friend -->
+              <div class="panel-panel" id="panelAdd" style="display:none">
+                <div style="font-weight:700;padding:8px 0">Add Friend</div>
+                <form class="addfriend-form" id="addFriendForm">
+                  <div class="addfriend-field">
+                    <label for="friendName" class="addfriend-label">Player Name / UID</label>
+                    <input id="friendName" class="addfriend-input" placeholder="Enter player name or UID" aria-label="Friend name or UID">
+                  </div>
+    
+                  <div class="friend-actions">
+                    <button type="button" class="btn" id="btnSendRequest">Send Request</button>
+                    <button type="button" class="btn ghost" id="btnCancelRequest">Cancel</button>
+                  </div>
+                  <div id="addFriendFeedback" class="addfriend-feedback"> <!-- hidden by JS when empty --></div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Social footer -->
+            <div class="social-card" aria-hidden="false">
+              <div class="title" style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:800">Social</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.8)">Online: <span id="onlineCountFooter">0</span></div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Social tabs">
+                <button class="tab-btn active" data-tab="players" id="tabPlayers">Players</button>
+                <button class="tab-btn" data-tab="friends" id="tabFriends">Friends</button>
+                <button class="tab-btn" data-tab="add" id="tabAdd">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /rooms-inner -->
+
+      <!-- PROFILE MODAL -->
+      <div id="profileModal" aria-hidden="true" style="display:none;">
+        <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+          <div class="profile-header">
+            <h2 id="profileTitle" class="profile-title">PLAYER PROFILE</h2>
+            <button class="close-btn" aria-label="Close profile">✖</button>
+          </div>
+
+          <div class="profile-content">
+            <!-- Profile -->
+            <div class="profile-section">
+              <h3 class="section-title">Profile</h3>
+              <div class="profile-row">
+                <div class="profile-avatar-container">
+                  <img id="profileAvatar" src="./assets/img/c4.png" alt="Profile" class="profile-avatar">
+                  <input id="profileAvatarInput" class="profile-avatar-input" name="profile_picture" type="file" accept="image/jpeg,image/png">
+                </div>
+                <div class="profile-meta">
+                  <h3 id="profileUsername" class="profile-username">Loading...</h3>
+                  <p id="profileUid" class="profile-uid">UID: Loading...</p>
+                  <div class="stat-item">
+                    <span class="stat-label">Points</span>
+                    <span id="profilePoints" class="stat-value">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Records -->
+            <div class="profile-section">
+              <h3 class="section-title">Records</h3>
+              <div id="recordsList" class="records-list"></div>
+            </div>
+
+            <!-- Account -->
+            <div class="profile-section">
+              <h3 class="section-title">Account</h3>
+              <form id="updateProfileForm" enctype="multipart/form-data">
+                <input type="hidden" name="update_type" value="profile">
+                <div class="stat-item">
+                  <span class="stat-label">Email</span>
+                  <input class="editable-input" id="profileEmail" name="email" type="email" value="Loading...">
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Username</span>
+                  <input class="editable-input" id="profileUsernameInput" name="username" type="text" value="Loading...">
+                </div>
+              </form>
+            </div>
+
+            <!-- Actions -->
+            <div class="profile-actions">
+              <form id="logoutForm" action="../api/logout.php" method="post" class="profile-action-form">
+                <button class="action-btn logout-btn" type="submit">
+                  <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /PROFILE MODAL -->
+    </div><!-- /rooms-panel -->
+  </div><!-- /wrap -->
+
+  <!-- Scripts + cache-bust -->
+  <script src="./assets/music/bgmusic.js?v=2025-11-06-a"></script>
+  <script src="assets/js/invite-socket.js?v=2025-11-06-a"></script>
+  <script src="./assets/js/multi.js?v=2025-11-06-a"></script>
+  <script src="./assets/js/profile-guard.global.js"></script>
+
+
+  <!-- One-time hard reload if an ancient cached JS is still stuck -->
+  <script>
+    (function(){
+      const EXPECT="2025-11-06-a";
+      if (window.__CHEMSAGA_MULTI_VERSION !== EXPECT) {
+        const k="__CHEMSAGA_MULTI_RELOAD_ONCE__";
+        if (!sessionStorage.getItem(k)) {
+          sessionStorage.setItem(k,"1");
+          location.replace(location.pathname + location.search + "#v="+EXPECT);
+          location.reload();
+        }
+      }
+    })();
+  </script>
+  <script src="./assets/music/sfx.js"></script>
+  <script src="./assets/music/music-loader.js"></script>
+  <script src="./assets/js/global-nocopypaste.js"></script>
+
+</body>
+</html>

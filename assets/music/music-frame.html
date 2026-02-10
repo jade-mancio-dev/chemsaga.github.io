@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Frame</title>
+  <script src="assets/music/bgmusic.js"></script>
+</head>
+<body>
+  <!-- Hidden iframe audio player -->
+  <script>
+    // Play once, never reset
+    console.log("[Music Frame] Loaded once.");
+
+    // Play immediately if possible
+    if (window.bgMusic) {
+      window.bgMusic.play().catch(() => {});
+    }
+
+    // Mark globally so pages can detect existing frame
+    window.name = "CHEMSAGA_MUSIC_FRAME";
+  </script>
+</body>
+</html>

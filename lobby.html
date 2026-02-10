@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CHEMSAGA Lobby</title>
+
+  <!-- Fonts / Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="./assets/css/lobby.css?v=2025-11-07c" />
+  <link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+</head>
+<body>
+  <!-- Back button -->
+  <button class="back-btn" id="backBtn" title="Back to Menu" aria-label="Back to Menu">
+    <i class="fa-solid fa-reply"></i>
+  </button>
+
+  <!-- (Hidden legacy controls kept but not used) -->
+  <button class="return-btn" id="returnBtn" title="Return to Room" aria-label="Return to Room" style="display:none;">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span class="return-label">Return</span>
+  </button>
+
+  <!-- Header + logo -->
+  <header>
+    <div class="logo-wrap">
+      <!-- Click logo → go to scene2.html -->
+      <a href="scene2.html" aria-label="CHEMSAGA Home">
+        <img src="./assets/img/c12.png" alt="CHEMSAGA Logo" class="logo-img">
+      </a>
+    </div>
+
+    <!-- Profile chip (opens modal) -->
+    <div class="top-right-profile" id="profileToggle" role="button" aria-label="Open profile" title="Open profile">
+      <img src="./assets/img/c4.png" alt="profile" class="profile-pic" id="miniAvatar">
+      <div class="player-name" id="miniName">Loading...</div>
+    </div>
+  </header>
+
+  <!-- Title row -->
+  <div class="title-row">
+    <h2>Lobby</h2>
+    <div class="title-controls">
+      <button class="refresh-btn" id="refreshBtn" title="Refresh lobby list" aria-label="Refresh lobby list">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span id="refreshLabel">Refresh</span>
+        <span id="refreshSpinner" class="refresh-spinner" style="display:none;"></span>
+      </button>
+      <button class="refresh-btn back-room-btn" id="backRoomBtn" title="Back to Room" aria-label="Back to Room" style="display:none;">
+        <i class="fa-solid fa-door-closed"></i>
+        <span>Back to Room</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scrollable lobby list -->
+  <div class="lobby-list-wrap">
+    <div class="lobby-list" id="lobbyList" role="list" aria-label="Available games">
+      <!-- rows injected by JS -->
+    </div>
+  </div>
+
+  <!-- ===================== PROFILE MODAL ===================== -->
+  <div id="profileModal" aria-hidden="true" style="display:none;">
+    <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="profile-header">
+        <h2 id="profileTitle" class="profile-title">PLAYER PROFILE</h2>
+        <button class="close-btn" onclick="closeProfile()" aria-label="Close profile">✖</button>
+      </div>
+
+      <div class="profile-content">
+        <!-- Profile -->
+        <div class="profile-section">
+          <h3 class="section-title">Profile</h3>
+
+          <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+            <div class="profile-avatar-container">
+              <img id="profileAvatar" src="./assets/img/c4.png" alt="Profile" class="profile-avatar">
+              <input id="profileAvatarInput" class="profile-avatar-input" name="profile_picture" type="file" accept="image/jpeg,image/png">
+            </div>
+            <div>
+              <h3 id="profileUsername" style="margin:0 0 6px 0;font-size:20px;">Loading...</h3>
+              <p id="profileUid" style="margin:0;color:rgba(255,255,255,0.7);">UID : Loading</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <span class="stat-label">Points</span>
+            <span id="profilePoints" class="stat-value">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Records -->
+        <div class="profile-section">
+          <h3 class="section-title">Records</h3>
+          <div id="recordsList"></div>
+        </div>
+
+        <!-- Account -->
+        <div class="profile-section">
+          <h3 class="section-title">Account</h3>
+          <form id="updateProfileForm" enctype="multipart/form-data">
+            <input type="hidden" name="update_type" value="profile">
+            <div class="stat-item">
+              <span class="stat-label">Email</span>
+              <input class="editable-input" id="profileEmail" name="email" type="email" value="Loading...">
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Username</span>
+              <input class="editable-input" id="profileUsernameInput" name="username" type="text" value="Loading...">
+            </div>
+          </form>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-buttons">
+          <form id="logoutForm" action="../php/api/logout.php" method="post">
+            <button class="action-btn logout-btn" type="submit">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =================== /PROFILE MODAL =================== -->
+
+  <!-- Audio + sockets -->
+  <script src="./assets/music/bgmusic.js?v=2025-10-30a" defer></script>
+  <script src="assets/js/invite-socket.js?v=2025-10-30a" defer></script>
+
+  <script>
+    // Background music iframe (once)
+    if (!window.parent || window.name !== "CHEMSAGA_MUSIC_FRAME") {
+      if (!window.top.frames['bgmusic-frame']) {
+        const iframe = document.createElement('iframe');
+        iframe.src = "assets/music/music-frame.html";
+        iframe.id = "bgmusic-frame";
+        iframe.name = "bgmusic-frame";
+        iframe.style.display = "none";
+        iframe.allow = "autoplay";
+        document.body.appendChild(iframe);
+      }
+    }
+  </script>
+
+  <script>
+    // Generic bootstrap: init socket after getting uid
+    (async function(){
+      try{
+        const r = await fetch('../php/api/get_profile.php',{credentials:'include'});
+        const t = await r.text(); let d;
+        try{ d = JSON.parse(t); }catch{ d = {}; }
+        const uid = d?.user?.id || d?.user?.user_id || d?.user?.uid;
+        if (uid && window.InviteSocket) InviteSocket.init(uid);
+      }catch(e){}
+      // Fallback polling for missed invites
+      async function poll(){
+        try{
+          const rr = await fetch('../php/invitations/list_pending.php',{credentials:'include',cache:'no-store'});
+          const jj = await rr.json();
+          if (jj?.ok && Array.isArray(jj.pending)) {
+            jj.pending.forEach(p => {
+              if (window.InviteSocket) InviteSocket.show({
+                invite_id: p.invite_id,
+                room_id: p.room_id,
+                from_user_id: p.from_user_id,
+                from_username: p.from_username,
+                from_avatar: p.from_avatar
+              });
+            });
+          }
+        }catch(e){}
+      }
+      setInterval(poll, 6000);
+    })();
+
+    // Profile modal handlers
+    function openProfile(){
+      const modal = document.getElementById('profileModal');
+      if(!modal) return;
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden','false');
+      const card = modal.querySelector('.profile-card');
+      if(card){
+        card.classList.remove('modal-pop');
+        void card.offsetWidth;
+        card.classList.add('modal-pop');
+      }
+    }
+    function closeProfile(){
+      const modal = document.getElementById('profileModal');
+      if(!modal) return;
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+    }
+    (function(){
+      const toggle = document.getElementById('profileToggle');
+      if(toggle){
+        toggle.addEventListener('click', openProfile);
+      }
+    })();
+  </script>
+
+  <!-- Main page logic -->
+  <script src="./assets/js/lobby.js?v=2025-10-30a" defer></script>
+  <script src="./assets/js/profile-guard.global.js"></script>
+
+
+  <!-- Invite helper -->
+  <script>
+    async function inviteUser(roomId, toUserId){
+      const fd = new FormData();
+      fd.append('room_id', roomId);
+      fd.append('to_user_id', toUserId);
+      const res = await fetch('../php/api/invitations/send.php', {
+        method:'POST', body: fd, credentials: 'include'
+      });
+      const data = await res.json();
+      if(!data.ok){
+        if(data.error === 'cooldown'){
+          alert('Please wait ' + data.retry_after + 's before inviting again.');
+        } else if (data.error === 'target_in_other_room') {
+          alert('That player is already in another room.');
+        } else {
+          alert('Invite failed: ' + data.error);
+        }
+      }
+    }
+  </script>
+  <script src="./assets/music/sfx.js"></script>
+  <script src="./assets/music/music-loader.js"></script>
+</body>
+</html>

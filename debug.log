@@ -1,0 +1,139 @@
+[2025-10-13 07:58:36] Starting login.php
+[2025-10-13 07:58:36] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 07:58:36] Login attempt - Username: Snapensity900
+[2025-10-13 07:58:36] User found: Snapensity900, ID: 17
+[2025-10-13 07:58:36] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:02:19] Starting login.php
+[2025-10-13 08:02:19] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:02:19] Login attempt - Username: Snapensity900
+[2025-10-13 08:02:19] User found: Snapensity900, ID: 17
+[2025-10-13 08:02:19] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:03:15] Starting login.php
+[2025-10-13 08:03:15] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:03:15] Login attempt - Username: Snapensity900
+[2025-10-13 08:03:15] User found: Snapensity900, ID: 17
+[2025-10-13 08:03:15] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:04:07] Starting login.php
+[2025-10-13 08:04:07] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:04:07] Login attempt - Username: Snapensity900
+[2025-10-13 08:04:07] User found: Snapensity900, ID: 17
+[2025-10-13 08:04:07] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:05:06] Starting login.php
+[2025-10-13 08:05:06] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:05:06] Login attempt - Username: Snapensity900
+[2025-10-13 08:05:06] User found: Snapensity900, ID: 17
+[2025-10-13 08:05:06] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:11:24] Starting login.php
+[2025-10-13 08:11:24] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:11:24] Login attempt - Username: Snapensity900
+[2025-10-13 08:11:24] User found: Snapensity900, ID: 17
+[2025-10-13 08:11:25] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:14:09] Starting logout.php
+[2025-10-13 08:14:09] Session ID: 1pfkqboctebnmqpejmcbom1ofo
+[2025-10-13 08:22:26] Starting login.php
+[2025-10-13 08:22:26] POST data: Array
+(
+    [username] => kaarin
+    [password] => 12345678
+)
+
+[2025-10-13 08:22:26] Login attempt - Username: kaarin
+[2025-10-13 08:22:26] User found: kaarin, ID: 18
+[2025-10-13 08:22:26] Login successful for user: kaarin (UID: 691981305)
+[2025-10-13 08:22:31] Starting login.php
+[2025-10-13 08:22:31] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:22:31] Login attempt - Username: Snapensity900
+[2025-10-13 08:22:31] User found: Snapensity900, ID: 17
+[2025-10-13 08:22:31] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:24:57] Starting login.php
+[2025-10-13 08:24:57] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:24:57] Login attempt - Username: Snapensity900
+[2025-10-13 08:24:57] User found: Snapensity900, ID: 17
+[2025-10-13 08:24:57] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:45:53] Starting login.php
+[2025-10-13 08:45:53] POST data: Array
+(
+    [username] => Snapensity900
+    [password] => 12345678
+)
+
+[2025-10-13 08:45:53] Login attempt - Username: Snapensity900
+[2025-10-13 08:45:53] User found: Snapensity900, ID: 17
+[2025-10-13 08:45:53] Login successful for user: Snapensity900 (UID: 203422204)
+[2025-10-13 08:46:15] Starting signup.php
+[2025-10-13 08:46:15] POST data: Array
+(
+    [username] => Dimensity1001
+    [email] => snapensity900@gmail.com
+    [password] => 123456789
+)
+
+[2025-10-13 08:46:15] Signup attempt - Username: Dimensity1001, Email: snapensity900@gmail.com
+[2025-10-13 08:46:15] Signup successful for user: Dimensity1001 with UID: 129358653
+[2025-10-13 08:46:43] Starting login.php
+[2025-10-13 08:46:43] POST data: Array
+(
+    [username] => Snapensity1001
+    [password] => 123456789
+)
+
+[2025-10-13 08:46:43] Login attempt - Username: Snapensity1001
+[2025-10-13 08:46:43] User not found: Snapensity1001
+[2025-10-13 08:46:48] Starting login.php
+[2025-10-13 08:46:48] POST data: Array
+(
+    [username] => Snapensity1001
+    [password] => 12345678
+)
+
+[2025-10-13 08:46:48] Login attempt - Username: Snapensity1001
+[2025-10-13 08:46:48] User not found: Snapensity1001
+[2025-10-13 08:46:51] Starting login.php
+[2025-10-13 08:46:51] POST data: Array
+(
+    [username] => Snapensity1001
+    [password] => 12345678
+)
+
+[2025-10-13 08:46:51] Login attempt - Username: Snapensity1001
+[2025-10-13 08:46:51] User not found: Snapensity1001

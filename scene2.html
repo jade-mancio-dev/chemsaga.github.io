@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CHEMSAGA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/scene2.css" />
+</head>
+<body>
+  <!-- Profile Modal -->
+  <div id="profileModal" aria-hidden="true">
+    <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="profile-header">
+        <h2 id="profileTitle" class="profile-title">PLAYER PROFILE</h2>
+        <button class="close-btn" onclick="window.__scene2?.closeProfile()" aria-label="Close profile">✖</button>
+      </div>
+      <div class="profile-content">
+        <div class="profile-section">
+          <h3 class="section-title">Profile</h3>
+          <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+            <div class="profile-avatar-container">
+              <img id="profileAvatar" src="./assets/img/c4.png" alt="Profile" class="profile-avatar">
+              <input id="profileAvatarInput" class="profile-avatar-input" name="profile_picture" type="file" accept="image/jpeg,image/png">
+            </div>
+            <div>
+              <h3 id="profileUsername" style="margin:0 0 6px 0;font-size:20px;">Loading...</h3>
+              <p id="profileUid" style="margin:0;color:rgba(255,255,255,0.7);">UID : Loading</p>
+            </div>
+          </div>
+          <div class="stat-item"><span class="stat-label">Points</span><span id="profilePoints" class="stat-value">Loading...</span></div>
+        </div>
+        
+        <div class="profile-section">
+          <h3 class="section-title">Records</h3>
+          <div id="recordsList"></div>
+        </div>
+        <div class="profile-section">
+          <h3 class="section-title">Account</h3>
+          <form id="updateProfileForm" enctype="multipart/form-data">
+            <input type="hidden" name="update_type" value="profile">
+            <div class="stat-item"><span class="stat-label">Email</span><input class="editable-input" id="profileEmail" name="email" type="email" value="Loading..."></div>
+            <div class="stat-item"><span class="stat-label">Username</span><input class="editable-input" id="profileUsernameInput" name="username" type="text" value="Loading..."></div>
+          </form>
+        </div>
+        <div style="grid-column:1/-1; display:flex; justify-content:center; margin-top:20px;">
+          <form id="logoutForm" action="../php/api/logout.php" method="post">
+            <button class="action-btn logout-btn" type="submit" style="width:100%; max-width:300px;">
+                 <i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" aria-hidden="true">
+    <div class="settings-content" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <h2 id="settingsTitle" class="settings-title">SETTINGS</h2>
+        <button class="settings-close-btn" onclick="window.__scene2?.closeSettings()" aria-label="Close settings">
+             <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label"> Background Music</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch"><input type="checkbox" id="bgMusicToggle" checked><span class="toggle-slider"></span></label>
+          <input id="bgMusicVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label"> Sound Effects</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch"><input type="checkbox" id="soundEffectsToggle" checked><span class="toggle-slider"></span></label>
+          <input id="soundEffectsVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas background -->
+  <canvas id="background-canvas" aria-hidden="true"></canvas>
+
+  <!-- Settings button -->
+  <div class="top-left-settings">
+    <div class="settings-button" onclick="window.__scene2?.openSettings()" role="button" aria-label="Open settings">
+      <i class="fa-solid fa-gear"></i>
+    </div>
+  </div>
+
+  <!-- Profile toggle -->
+  <div class="top-right-profile" onclick="window.__scene2?.openProfile()" role="button" aria-label="Open profile">
+    <img id="topProfilePic" class="profile-pic" src="./assets/img/c4.png" alt="profile">
+    <div id="topPlayerName" class="player-name">Loading...</div>
+  </div>
+
+  <!-- Responsive Header -->
+  <header class="container py-3">
+    <div class="row justify-content-center align-items-center flex-column">
+      <!-- Cube on top -->
+      <div class="col-auto d-flex justify-content-center mb-3">
+        <div class="cube-embed" aria-hidden="true">
+          <div class="scene">
+            <div class="cube">
+              <div class="spinner" id="spinner-cube">
+                <div class="face front">H</div>
+                <div class="face back">H</div>
+                <div class="face right">H</div>
+                <div class="face left">H</div>
+                <div class="face top">H</div>
+                <div class="face bottom">H</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logo below cube -->
+      <div class="col-auto d-flex justify-content-center">
+        <h1 class="logo">CHEMSAGA</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU BUTTONS -->
+  <main style="z-index:10;">
+    <div class="container text-center">
+      <div class="row justify-content-center gx-3 gy-3">
+        <div class="col-auto"><button class="card-button" id="singlemodeBtn">SINGLE MODE</button></div>
+        <div class="col-auto"><button class="card-button" id="creategameBtn">CREATE GAME</button></div>
+        <div class="col-auto"><button class="card-button" id="multiplayerBtn">MULTIPLAYER</button></div>
+        <div class="col-auto"><button class="card-button" id="joinLobbyBtn">Join Lobby</button></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Audio -->
+  <audio id="soundEffect">
+    <source src="./assets/audio/sound_effect.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="./assets/music/bgmusic.js"></script>
+  <script src="assets/js/invite-socket.js"></script>
+<script>
+  // Generic bootstrap: get profile to know the current user id, then init socket.
+  (async function(){
+    try{
+      const r = await fetch('../php/api/get_profile.php',{credentials:'include'});
+      const t = await r.text(); let d;
+      try{ d = JSON.parse(t); }catch{ d = {}; }
+      const uid = d?.user?.id || d?.user?.user_id || d?.user?.uid;
+      if (uid && window.InviteSocket) InviteSocket.init(uid);
+    }catch(e){}
+    // Fallback polling: if socket is disconnected or user missed a push
+    async function poll(){
+      try{
+        const rr = await fetch('../php/invitations/list_pending.php',{credentials:'include',cache:'no-store'});
+        const jj = await rr.json();
+        if (jj?.ok && Array.isArray(jj.pending)) {
+          jj.pending.forEach(p => {
+            if (window.InviteSocket) InviteSocket.show({
+              invite_id: p.invite_id,
+              room_id: p.room_id,
+              from_user_id: p.from_user_id,
+              from_username: p.from_username,
+              from_avatar: p.from_avatar
+            });
+          });
+        }
+      }catch(e){}
+    }
+    setInterval(poll, 6000);
+  })();
+</script>
+
+
+  <script src="./assets/js/scene2.js"></script>
+  <script src="./assets/js/profile-guard.global.js"></script>
+
+  <script>
+  // ===== Background music frame (kept) =====
+  if (!window.parent || window.name !== "CHEMSAGA_MUSIC_FRAME") {
+    if (!window.top.frames['bgmusic-frame']) {
+      const iframe = document.createElement('iframe');
+      iframe.src = "assets/music/music-frame.html";
+      iframe.id = "bgmusic-frame";
+      iframe.name = "bgmusic-frame";
+      iframe.style.display = "none";
+      iframe.allow = "autoplay";
+      document.body.appendChild(iframe);
+    }
+  }
+
+  // ====== Scene2 helpers (profile/settings + online heartbeat) ======
+  window.__scene2 = (function(){
+    const $ = (s)=>document.querySelector(s);
+
+    // --- Profile modal ---
+    function openProfile(){
+      const m = $('#profileModal'); if(!m) return;
+      m.style.display='flex'; m.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    }
+    function closeProfile(){
+      const m = $('#profileModal'); if(!m) return;
+      m.style.display='none'; m.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    }
+
+    // --- Settings modal ---
+    function openSettings(){
+      const m = $('#settingsModal'); if(!m) return;
+      m.style.display='block'; m.setAttribute('aria-hidden','false');
+    }
+    function closeSettings(){
+      const m = $('#settingsModal'); if(!m) return;
+      m.style.display='none'; m.setAttribute('aria-hidden','true');
+    }
+
+    // --- Load profile (top-right + modal header bits) ---
+    async function loadProfile(){
+      try{
+        const r = await fetch('get_profile.php',{credentials:'include',cache:'no-store'});
+        const t = await r.text(); let d;
+        try{ d = JSON.parse(t); }catch{ throw new Error('JSON parse error'); }
+        if(!d.success || !d.user) throw new Error(d.error||'profile_failed');
+
+        const ts = Date.now();
+        const pic = (d.user.profile_picture || 'assets/img/c4.png') + '?t=' + ts;
+
+        const topPic = $('#topProfilePic'); if(topPic) topPic.src = pic;
+        const topName = $('#topPlayerName'); if(topName) topName.textContent = d.user.username || 'Player';
+
+        const pAvatar = $('#profileAvatar'); if(pAvatar) pAvatar.src = pic;
+        const pUser = $('#profileUsername'); if(pUser) pUser.textContent = d.user.username || 'Player';
+        const pUid  = $('#profileUid'); if(pUid){ pUid.textContent = 'UID : ' + (d.user.uid || 'N/A'); }
+        const pPts  = $('#profilePoints'); if(pPts) pPts.textContent = d.user.points ?? '0';
+        const pMail = $('#profileEmail'); if(pMail) pMail.value = d.user.email || '';
+        const pName = $('#profileUsernameInput'); if(pName) pName.value = d.user.username || '';
+      }catch(e){
+        // silent fail; scene2.js may also load profile
+      }
+    }
+
+    // --- Global online heartbeat (no room_id) ---
+    let hbTimer = null, visTimer = null;
+    async function pingOnline(){
+      try{
+        const fd = new FormData();
+        // No room_id here -> marks online globally & clears current_room_id
+        await fetch('user_ping.php', { method:'POST', body: fd, credentials:'include', cache:'no-store' });
+      }catch(e){ /* ignore transient */ }
+    }
+    function startHeartbeat(){
+      // initial ping soon after load
+      pingOnline();
+      // regular keepalive while on menu
+      hbTimer = setInterval(pingOnline, 15000);
+
+      // when tab becomes visible again, ping quickly
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          clearTimeout(visTimer);
+          visTimer = setTimeout(pingOnline, 250);
+        }
+      });
+      // Safety: ping on focus
+      window.addEventListener('focus', () => {
+        clearTimeout(visTimer);
+        visTimer = setTimeout(pingOnline, 250);
+      });
+      // Try a last ping when navigating away (best-effort)
+      window.addEventListener('pagehide', () => { navigator.sendBeacon && navigator.sendBeacon('user_ping.php'); });
+    }
+
+    // init
+    document.addEventListener('DOMContentLoaded', ()=>{
+      loadProfile();
+      startHeartbeat();
+    });
+
+    // expose for buttons
+    return { openProfile, closeProfile, openSettings, closeSettings };
+  })();
+  </script>
+
+  <script>
+async function inviteUser(roomId, toUserId){
+  const fd = new FormData();
+  fd.append('room_id', roomId);
+  fd.append('to_user_id', toUserId);
+  const res = await fetch('../php/api/invitations/send.php', {  <!-- ✅ FIXED -->
+    method:'POST', body: fd, credentials: 'include'
+  });
+  const data = await res.json();
+  if(!data.ok){
+    if(data.error === 'cooldown'){
+      alert('Please wait ' + data.retry_after + 's before inviting again.');
+    } else if (data.error === 'target_in_other_room') {
+      alert('That player is already in another room.');
+    } else {
+      alert('Invite failed: ' + data.error);
+    }
+  } else {
+    // success: you can disable the Invite button until 60s or show a toast
+  }
+}
+</script>
+<script src="./assets/music/sfx.js"></script>
+<script src="./assets/music/music-loader.js"></script>
+<script src="./assets/js/global-nocopypaste.js"></script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CHEMSAGA - Periodic Table with Dice</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+
+  <style>
+    /*Quit Modal Design */
+.quit-overlay,
+.pause-overlay,
+.rules-overlay,
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pause-card,
+.quit-card {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: 20px;
+  padding: 32px 40px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  color: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+              0 0 30px rgba(100, 200, 255, 0.2);
+  animation: popIn 0.4s ease-out;
+}
+
+.pause-card h2,
+.quit-card h2 {
+  margin: 0 0 16px;
+  font-size: 2.2em;
+  background: linear-gradient(90deg, #00d4ff, #0099ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.pause-card p,
+.quit-card p {
+  margin: 0 0 28px;
+  font-size: 1.1em;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* Buttons — reuse your existing ones */
+.resume-btn,
+.exit-btn {
+  padding: 14px 32px;
+  margin: 10px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.resume-btn {
+  background: linear-gradient(135deg, #00ff88, #00cc70);
+  color: #000;
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+}
+
+.resume-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 255, 136, 0.6);
+}
+
+.exit-btn {
+  background: linear-gradient(135deg, #ff4757, #ff3742);
+  color: white;
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+}
+
+.exit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 71, 87, 0.6);
+}
+
+.quit-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+  </style>
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="./assets/css/multi-tile.css?v=2025-11-13b">
+</head>
+<body class="no-select" oncontextmenu="return false">
+  <!-- Header -->
+  <div class="main-header">
+    <div class="header-container">
+      <img src="./assets/img/c1.png" alt="CHEMSAGA Logo" class="logo">
+    </div>
+  </div>
+
+  <!-- Game Timer -->
+  <div class="game-timer-header">
+    <span id="game-timer">00:00</span>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- LEFT: Live Players + Dice -->
+    <aside class="player-sidebar" aria-label="Players">
+      <div>
+        <div class="sidebar-title">Players</div>
+        <div class="sidebar-sub" id="playersSub">Live room</div>
+      </div>
+
+      <!-- Dice + timer inside players card -->
+      <div class="dice-shell">
+        <div class="roll-timer-container" id="rollTimerContainer" aria-live="polite">
+          <span id="roll-timer">5</span>
+        </div>
+
+        <div class="dice-container">
+          <div class="dice" id="dice">
+            <!-- Face 1 -->
+            <div class="face front">
+              <div class="dot"></div>
+            </div>
+            <!-- Face 6 -->
+            <div class="face back">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <!-- Face 2 -->
+            <div class="face top">
+              <div class="dot"></div><div class="dot"></div>
+            </div>
+            <!-- Face 4 -->
+            <div class="face bottom">
+              <div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div>
+            </div>
+            <!-- Face 3 -->
+            <div class="face right">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <!-- Face 5 -->
+            <div class="face left">
+              <div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+
+          <button class="roll" id="rollBtn">Roll</button>
+        </div>
+      </div>
+
+      <!-- Dynamic roster -->
+      <div class="player-list" id="playerList"></div>
+
+      <div style="margin-top:auto; font-size:12px; color:rgba(255,255,255,0.65);">
+        Tip: Only the highlighted player can roll. Dice & moves are synced by the server.
+      </div>
+    </aside>
+
+    <!-- CENTER: Board only -->
+    <div class="grid-container" id="gridContainer"></div>
+  </div>
+
+  <script src="./assets/js/quit.js?v=2025-12-08"></script>
+
+  <!-- Core game logic (network-aware implementation) -->
+  <script src="./assets/js/multi-tile.js?v=2025-11-13b"></script>
+
+  <!-- Copy/paste hardening -->
+  <script>
+    (function () {
+      function isEditable(el) {
+        return el && (
+          el.closest('.allow-select') ||
+          el.closest('[contenteditable]') ||
+          el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA'
+        );
+      }
+      ['copy','cut','paste','dragstart','selectstart','contextmenu'].forEach(evt => {
+        document.addEventListener(evt, e => {
+          if (!isEditable(e.target)) e.preventDefault();
+        }, true);
+      });
+      document.addEventListener('keydown', e => {
+        const k = (e.key || '').toLowerCase();
+        if ((e.ctrlKey || e.metaKey) && ['c','x','v','a'].includes(k) && !isEditable(e.target)) {
+          e.preventDefault();
+        }
+      }, true);
+    })();
+  </script>
+
+  <!-- === Gate + Roster + Boot === -->
+  <script>
+    const API_BASE    = '/Newchemsaga/php/api';
+    const PUBLIC_BASE = '/Newchemsaga/public';
+
+    // Build live roster from backend room_members.php
+    async function loadRoster(room_id) {
+      try {
+        const r = await fetch(
+          `${API_BASE}/room_members.php?room_id=${encodeURIComponent(room_id)}`,
+          { cache: 'no-store', credentials: 'include' }
+        );
+        const j = await r.json();
+        if (!j.ok) return;
+
+        const listEl = document.getElementById('playerList');
+        if (!listEl) return;
+
+        listEl.innerHTML = '';
+        const members = j.members || j.players || [];
+
+        members.forEach(m => {
+          const displayName =
+            m.username ||
+            ('UID ' + (m.uid || m.user_uid || m.id || m.user_id || ''));
+          const avatarSrc =
+            m.avatar || m.profile_picture || './assets/img/c4.png';
+          const uid = String(m.uid || m.user_uid || m.user_id || m.id || '');
+
+          const item = document.createElement('div');
+          item.className = 'player';
+          item.setAttribute('data-uid', uid);
+
+          item.innerHTML = `
+            <div class="player-left">
+              <div class="avatar-wrap">
+                <img src="${avatarSrc}" alt="" class="avatar-img">
+              </div>
+              <div class="player-name">
+                ${displayName}
+                ${
+                  (m.role === 'host' || m.is_host)
+                    ? '<span class="player-role-tag">HOST</span>'
+                    : ''
+                }
+              </div>
+            </div>
+            <div class="score-card" data-uid="${uid}">0</div>
+          `;
+
+          listEl.appendChild(item);
+        });
+
+        const sub = document.getElementById('playersSub');
+        if (sub) {
+          sub.textContent =
+            `Live room roster • ${members.length} player${members.length === 1 ? '' : 's'}`;
+        }
+      } catch (e) {
+        console.error('loadRoster error:', e);
+      }
+    }
+
+    // Verify access via PHP (source of truth) then boot WS game client
+    (async function verifyAndBoot() {
+      const u = new URL(window.location.href);
+      const room_id = u.searchParams.get('room_id');
+      const t       = u.searchParams.get('t');
+
+      if (!room_id || !t) {
+        alert('Missing room parameters.');
+        window.location.href = `${PUBLIC_BASE}/multi2.html`;
+        return;
+      }
+
+      try {
+        const r = await fetch(
+          `${API_BASE}/verify_session.php?room_id=${encodeURIComponent(room_id)}&t=${encodeURIComponent(t)}`,
+          { cache: 'no-store', credentials: 'include' }
+        );
+        const j = await r.json();
+
+        if (!j.ok) {
+          alert('Access denied: ' + (j.error || 'unknown'));
+          window.location.href = `${PUBLIC_BASE}/multi2.html`;
+          return;
+        }
+
+        // Use backend as identity + authority
+        const session = {
+          uid:      String(j.uid || j.user_uid || j.user_id || ''), // this MUST match what game-server.js expects
+          user_id:  j.user_id || null,
+          username: j.username || null,
+          avatar:   j.avatar || j.profile_picture || null,
+          room_id:  parseInt(j.room_id || room_id, 10),
+          token:    t,
+          is_host:  !!(j.is_host || j.role === 'host')
+        };
+
+        if (!session.uid || !session.room_id) {
+          alert('Missing identity from verify_session.');
+          window.location.href = `${PUBLIC_BASE}/multi2.html`;
+          return;
+        }
+
+        // Expose for debugging / other scripts if needed
+        window.CHEMSAGA = session;
+
+        // Build roster UI
+        await loadRoster(session.room_id);
+
+        // Boot the synced game client (implemented in multi-tile.js)
+        if (window.ChemsagaMultiTileBoot && typeof window.ChemsagaMultiTileBoot.start === 'function') {
+          window.ChemsagaMultiTileBoot.start(session);
+        } else {
+          console.error('ChemsagaMultiTileBoot.start not found. Check multi-tile.js.');
+        }
+
+      } catch (e) {
+        console.error('verifyAndBoot error:', e);
+        alert('Network error.');
+        window.location.href = `${PUBLIC_BASE}/multi2.html`;
+      }
+    })();
+  </script>
+  <script src="./assets/js/global-nocopypaste.js"></script>
+  <script src="./assets/music/gm.js"></script>
+
+
+
+</body>
+</html>

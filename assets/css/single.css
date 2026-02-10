@@ -1,0 +1,517 @@
+:root {
+  --bg-1: #0b0711;
+  --accent-1: 255,208,80;
+  --accent-2: 255,140,0;
+}
+
+/* Reset & base layout */
+* {
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: linear-gradient(135deg, var(--bg-1), #16213e 60%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* ---------- HEADER ---------- */
+.main-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+  width: 100%;
+  max-width: 1400px;
+  position: relative;
+}
+
+/* Logo wrapper & image (match lobby style) */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  height: 64px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.logo:hover {
+  transform: scale(1.03);
+}
+
+/* ---------- APP WRAPPER ---------- */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 1400px;
+  max-height: calc(100vh - 80px);
+  padding-bottom: 18px;
+}
+
+/* Title bar */
+.page-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(145deg, rgba(138,43,226,0.2), rgba(75,0,130,0.2));
+  border: 2px solid transparent;
+  border-image: linear-gradient(
+    145deg,
+    rgba(255,208,80,0.9),
+    rgba(255,140,0,0.9)
+  ) 1;
+  box-shadow:
+    0 5px 15px rgba(112, 59, 218, 0.78),
+    inset 0 1px 0 rgba(11, 3, 119, 0.57);
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  border-radius: 8px;
+}
+
+/* ---------- SETTINGS & BACK BUTTONS (TOP BAR) ---------- */
+.top-left-settings {
+  position: absolute;
+  top: 14px;
+  left: 8px;
+  z-index: 30;
+}
+.top-right-back {
+  position: absolute;
+  top: 14px;
+  right: 8px;
+  z-index: 30;
+}
+
+.settings-button,
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  min-width: 96px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Rajdhani', sans-serif;
+  color: #000;
+  background: linear-gradient(
+    145deg,
+    rgba(255,208,80,0.9),
+    rgba(255,140,0,0.9)
+  );
+  box-shadow: 0 6px 14px rgba(0,0,0,0.55);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.settings-button i,
+.back-button i {
+  font-size: 14px;
+}
+.settings-button:hover,
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+}
+
+.settings-text,
+.back-text {
+  display: inline-block;
+}
+
+/* ---------- SETTINGS MODAL ---------- */
+#settingsModal {
+  position: fixed;
+  top: 88px;
+  left: 24px;
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  box-sizing: border-box;
+  background:
+    linear-gradient(145deg, rgba(26,10,46,0.95), rgba(22,33,62,0.95)),
+    radial-gradient(circle at 30% 30%, rgba(138,43,226,0.1) 0%, transparent 70%);
+  border: 2px solid rgba(138,43,226,0.3);
+  border-radius: 15px;
+  padding: 18px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+  backdrop-filter: blur(15px);
+  display: none;
+  z-index: 1002;
+  font-family: 'Rajdhani', sans-serif;
+}
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(138,43,226,0.3);
+}
+.settings-title {
+  font-size: 24px;
+  font-weight: 900;
+  font-family: 'Orbitron', sans-serif;
+}
+.settings-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+.settings-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+.settings-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(145deg, rgba(220,53,69,0.95), rgba(200,45,60,0.95));
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(220,53,69,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.settings-close-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 26px rgba(220,53,69,0.36);
+}
+
+/* Toggle & volume */
+.toggle-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 15px;
+  cursor: pointer;
+  display: inline-block;
+}
+.toggle-switch input {
+  display: none;
+}
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(138,43,226,0.9), rgba(75,0,130,0.9));
+  transition: all .3s ease;
+}
+.toggle-switch input:checked + .toggle-slider {
+  transform: translateX(30px);
+  background: linear-gradient(145deg, rgba(40,167,69,0.9), rgba(32,134,55,0.9));
+}
+.volume-slider {
+  width: 100px;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(0,0,0,0.5);
+  border-radius: 3px;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(138,43,226,0.9), rgba(75,0,130,0.9));
+  box-shadow: 0 0 10px rgba(138,43,226,0.5);
+}
+
+/* ---------- DIFFICULTY CARD ---------- */
+.difficulty-card {
+  max-width: 1400px;
+  width: 100%;
+  height: calc(100vh - 120px);
+  background: rgba(255,255,255,0.03);
+  border: 2px solid transparent;
+  border-image: linear-gradient(
+    145deg,
+    rgba(255,208,80,0.9),
+    rgba(255,140,0,0.9)
+  ) 1;
+  box-shadow:
+    0 5px 15px rgba(112, 59, 218, 0.78),
+    inset 0 1px 0 rgba(11, 3, 119, 0.57);
+  padding: 60px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.difficulty-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+  align-items: stretch;
+}
+
+/* Difficulty buttons */
+.difficulty-button {
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(
+    145deg,
+    rgba(255,208,80,0.95),
+    rgba(255,140,0,0.95)
+  );
+  color: #000;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  transition:
+    transform 180ms cubic-bezier(.2,.9,.3,1),
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+.difficulty-button:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 22px 48px rgba(255,208,80,0.18);
+}
+.difficulty-button:focus {
+  outline: none;
+  box-shadow: 0 0 30px rgba(255,208,80,0.6);
+}
+.difficulty-button.selected {
+  background: linear-gradient(
+    145deg,
+    rgba(138,43,226,0.9),
+    rgba(75,0,130,0.9)
+  );
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(138,43,226,0.4);
+}
+
+/* Start button (if used) */
+.start-game-button {
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(
+    145deg,
+    rgba(40,167,69,0.95),
+    rgba(32,134,55,0.95)
+  );
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  transition:
+    transform 180ms cubic-bezier(.2,.9,.3,1),
+    box-shadow 180ms ease;
+}
+.start-game-button:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 22px 48px rgba(40,167,69,0.3);
+}
+.start-game-button:focus {
+  outline: none;
+  box-shadow: 0 0 30px rgba(40,167,69,0.6);
+}
+
+.difficulty-note {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ---------- RESPONSIVE BREAKPOINTS ---------- */
+
+@media (max-width: 1100px) {
+  .difficulty-card {
+    padding: 40px;
+    height: calc(100vh - 120px);
+    max-width: 900px;
+  }
+  .difficulty-list {
+    max-width: 620px;
+    gap: 18px;
+  }
+  .difficulty-button,
+  .start-game-button {
+    font-size: 24px;
+    padding: 18px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 700px) {
+  .logo {
+    height: 56px;
+  }
+
+  .difficulty-card {
+    padding: 26px;
+    height: auto;
+    min-height: calc(100vh - 120px);
+  }
+  .difficulty-list {
+    max-width: 100%;
+    gap: 14px;
+  }
+  .difficulty-button,
+  .start-game-button {
+    font-size: 20px;
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .page-title {
+    font-size: 18px;
+  }
+}
+
+/* --------- PORTRAIT MOBILE/TABLET: SMALL ICON BUTTONS ---------
+   This is the important override to ensure they shrink in portrait. */
+@media (orientation: portrait) and (max-width: 900px) {
+  .main-header {
+    height: 56px;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .top-left-settings {
+    top: 10px;
+    left: 8px;
+  }
+  .top-right-back {
+    top: 10px;
+    right: 8px;
+  }
+
+  .settings-button,
+  .back-button {
+    min-width: 0;
+    width: 40px;
+    height: 34px;
+    padding: 0;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.6);
+    gap: 0;
+  }
+
+  .settings-text,
+  .back-text {
+    display: none; /* icon-only in portrait */
+  }
+
+  .settings-button i,
+  .back-button i {
+    font-size: 16px;
+  }
+
+  #settingsModal {
+    top: 54px;
+    left: 8px;
+    width: calc(100vw - 16px);
+    max-width: 320px;
+  }
+
+  /* Responsive adjustments for difficulty buttons in portrait */
+  .difficulty-card {
+    padding: 20px;
+    min-height: calc(100vh - 100px); /* Slightly reduced to account for smaller header */
+  }
+
+  .difficulty-list {
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .difficulty-button,
+  .start-game-button {
+    font-size: 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    min-height: 56px; /* Ensures touch-friendly height on mobile */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .difficulty-note {
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  .page-title {
+    font-size: 16px;
+    padding: 8px;
+  }
+}
+
+/* Extra small tweaks */
+@media (max-width: 480px) {
+  .difficulty-button,
+  .start-game-button {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  .difficulty-note {
+    font-size: 10px;
+  }
+}
+.modal-pop {
+  animation: modalPopAnim 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes modalPopAnim {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}

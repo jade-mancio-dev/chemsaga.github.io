@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CHEMSAGA - Create Multiplayer Board</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="./assets/css/create.css"/>
+</head>
+<body>
+  <canvas id="background-canvas" aria-hidden="true"></canvas>
+
+  <header class="main-header">
+  <!-- LEFT -->
+  <div class="header-left">
+    <div class="back-button" onclick="goBack()" role="button">
+      <i class="fa-solid fa-reply"></i>
+    </div>
+
+    <div class="tile-nav-header">
+      <button id="prevTile">◀</button>
+      <span class="tile-counter" id="tileCounter">1 / 100</span>
+      <button id="nextTile">▶</button>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="header-center">
+    <img src="./assets/img/c1.png" alt="CHEMSAGA Logo" class="logo">
+  </div>
+
+  <!-- RIGHT (SPACER) -->
+  <div class="header-right"></div>
+</header>
+
+
+
+  <div class="app-wrapper">
+    <aside class="player-sidebar" aria-label="Tiles list">
+      <div class="sidebar-header">
+  <div>
+    <div class="sidebar-title tiles-title">
+      <i class="fa-solid fa-th-large"></i> Tiles
+    </div>
+    <div class="sidebar-sub">H → Fm</div>
+  </div>
+
+
+      <div class="tiles-search">
+        <input id="tileSearch" class="search-input" type="search"
+               placeholder="Search..."
+               aria-label="Search tiles">
+        <button id="clearSearch" class="search-clear" title="Clear">×</button>
+      </div>
+
+      <div id="tilesList" class="tiles-list" aria-label="Element tiles list"></div>
+      <div id="searchFeedback" class="search-feedback"></div>
+      <div class="sidebar-tip">Tip: Tap a tile to edit.</div>
+    </aside>
+
+    <section class="grid-container" id="gridContainer" aria-label="Game board">
+      <div class="empty-hint">Formulate Your Questions</div>
+      <div class="board-inner" id="boardInner">
+        <div class="quadrant" id="quad-0"><div class="quad-label">Top Left</div></div>
+        <div class="quadrant" id="quad-1"><div class="quad-label">Top Right</div></div>
+        <div class="quadrant" id="quad-2"><div class="quad-label">Bottom Left</div></div>
+        <div class="quadrant" id="quad-3"><div class="quad-label">Bottom Right</div></div>
+      </div>
+    </section>
+
+    <aside class="right-panel" aria-label="Game settings">
+     
+      <div class="card-shell">
+  <div class="mode-area">
+    <div class="mode-viewport">
+      <div class="modes" id="modes">
+        <div class="mode-card selected" data-id="m3">
+          <div class="mode-left">3P</div>
+          <div class="mode-info">
+            <div class="mode-title">3 Players</div>
+
+          </div>
+        </div>
+        <div class="mode-card" data-id="m6">
+          <div class="mode-left">6P</div>
+          <div class="mode-info">
+            <div class="mode-title">6 Players</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-quadrant">
+    <input type="number" class="time-input" placeholder="Time (sec)" min="1" step="1">
+    <input type="number" class="time-input" placeholder="Time (min)" min="1" step="1">
+  </div>
+</div>
+
+      <!-- Replace your old <select class="quiz-type-select"> with this -->
+<div class="quiz-wrapper">
+  <div class="custom-quiz-select" id="customQuizSelect">
+    <div class="quiz-selected">Multiple Choice</div>
+    <div class="quiz-options">
+      <div data-value="multiple-choice">Multiple Choice</div>
+      <div data-value="true-false">True/False</div>
+      <div data-value="mix">Mix</div>
+    </div>
+  </div>
+</div>
+
+      <div class="room-type-card">
+        <button class="room-btn"><i class="fa-solid fa-users"></i> Public</button>
+        <button class="room-btn"><i class="fa-solid fa-lock"></i> Private</button>
+      </div>
+
+      <button class="save-btn" onclick="goToMulti2()">
+        <i class="fa-solid fa-cloud-arrow-down"></i> Save
+      </button>
+
+    </aside>
+  </div>
+
+  <script src="./assets/music/bgmusic.js"></script>
+  <script src="assets/js/invite-socket.js"></script>
+  <script>
+    (async function(){
+      try{
+        const r = await fetch('/api/get_profile.php',{credentials:'include'});
+        const t = await r.text();
+        let d; try{d=JSON.parse(t)}catch{d={}}
+        const uid = d?.user?.id || d?.user?.user_id || d?.user?.uid;
+        if (uid && window.InviteSocket) InviteSocket.init(uid);
+      }catch(e){}
+      setInterval(async()=>{
+        try{
+          const rr = await fetch('/invitations/list_pending.php',{credentials:'include',cache:'no-store'});
+          const jj = await rr.json();
+          if (jj?.ok && Array.isArray(jj.pending)) {
+            jj.pending.forEach(p => {
+              if (window.InviteSocket) InviteSocket.show({
+                invite_id: p.invite_id, room_id: p.room_id, from_user_id: p.from_user_id,
+                from_username: p.from_username, from_avatar: p.from_avatar
+              });
+            });
+          }
+        }catch(e){}
+      }, 6000);
+    })();
+  </script>
+  <script src="./assets/js/create.js"></script>
+  <script>
+    // --- START: MODE CARD SELECTION LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const modeCards = document.querySelectorAll('.mode-card');
+
+      modeCards.forEach(card => {
+        card.addEventListener('click', () => {
+          // Remove 'selected' class from all cards
+          modeCards.forEach(c => c.classList.remove('selected'));
+         
+          // Add 'selected' class to the clicked card
+          card.classList.add('selected');
+         
+          // Optional: Log the selected mode
+          // console.log('Mode selected:', card.getAttribute('data-id'));
+        });
+      });
+    });
+    // --- END: MODE CARD SELECTION LOGIC ---
+  </script>
+  <script>
+    async function inviteUser(roomId, toUserId){
+      const fd = new FormData(); fd.append('room_id', roomId); fd.append('to_user_id', toUserId);
+      const res = await fetch('/invitations/send.php', { method:'POST', body: fd, credentials: 'include'});
+      const data = await res.json();
+      if(!data.ok){ alert(data.error === 'cooldown' ? 'Wait '+data.retry_after+'s' : 'Error: '+data.error); }
+    }
+  </script>
+
+  <script>
+// === FIXED: Custom Quiz Selector – Closes properly after selection ===
+document.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('customQuizSelect');
+  if (!select) return;
+
+  const selected = select.querySelector('.quiz-selected');
+  const optionsContainer = select.querySelector('.quiz-options');
+  const options = optionsContainer.querySelectorAll('div');
+
+  // Open / Close when clicking the selected area
+  selected.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isActive = optionsContainer.classList.contains('active');
+    
+    // Close all other possible selects first (if you add more later)
+    document.querySelectorAll('.quiz-options').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('.quiz-selected').forEach(s => s.classList.remove('active'));
+    
+    if (!isActive) {
+      optionsContainer.classList.add('active');
+      selected.classList.add('active');
+    }
+  });
+
+  // When choosing an option
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      // Update text
+      selected.textContent = option.textContent;
+
+      // Optional: mark the chosen option visually
+      options.forEach(o => o.classList.remove('selected'));
+      option.classList.add('selected');
+
+      // Close dropdown + remove green "open" state
+      optionsContainer.classList.remove('active');
+      selected.classList.remove('active');
+
+      // Keep a subtle green glow to show something is selected (optional)
+      selected.classList.add('selected-glow');
+    });
+  });
+
+  // Close when clicking anywhere outside
+  document.addEventListener('click', () => {
+    optionsContainer.classList.remove('active');
+    selected.classList.remove('active');
+  });
+
+  // Prevent closing when clicking inside the options
+  optionsContainer.addEventListener('click', (e) => e.stopPropagation());
+});
+
+// Add a tiny bit of CSS for the permanent "selected" glow (optional but looks great)
+const style = document.createElement('style');
+style.textContent = `
+  .quiz-selected.selected-glow {
+    background: linear-gradient(135deg, #00ff88, #00cc66) !important;
+    box-shadow: 0 0 18px rgba(0,255,0,0.5);
+  }
+  .quiz-options div.selected {
+    background: rgba(255,208,80,0.4);
+  }
+`;
+document.head.appendChild(style);
+
+// === FIXED: Public / Private + Save Button Green Effect ===
+document.addEventListener('DOMContentLoaded', () => {
+  // ——— Public / Private Buttons ———
+  const roomButtons = document.querySelectorAll('.room-btn');
+  roomButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Remove active from all
+      roomButtons.forEach(b => b.classList.remove('active'));
+      // Add active to clicked one
+      this.classList.add('active');
+    });
+  });
+
+  // ——— Save Button – Permanent Green When Clicked (Toggle) ———
+  const saveBtn = document.querySelector('.save-btn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function() {
+      this.classList.toggle('active');
+    });
+  }
+});
+</script>
+  <script src="./assets/music/sfx.js"></script>
+  <script src="./assets/music/music-loader.js"></script>
+
+</body>
+</html>

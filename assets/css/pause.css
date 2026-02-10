@@ -1,0 +1,189 @@
+.rules-overlay, .pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.rules-card, .pause-card {
+    background: linear-gradient(135deg, #030f31 0%, #030d2d 100%);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.rules-card h2, .pause-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rules-card ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 15px 0;
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+}
+
+.rules-card ul li {
+    background: linear-gradient(90deg, #77178fd4 0%, #4a098f94 100%);
+    margin: 8px 0;
+    padding: 10px 10px 10px 50px; /* Increased left padding for larger 3D icon */
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    position: relative;
+    min-height: 24px; /* Ensure space for icon */
+}
+
+.rules-card ul li .rule-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+}
+
+.rules-card ul li .rule-icon .dice-3d-icon {
+    width: 100%;
+    height: 100%;
+    fill: #ffffff;
+}
+
+.rules-card p, .pause-card p {
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+    margin: 10px 0;
+}
+
+.rules-card button, .pause-card button {
+    padding: 12px 24px;
+    margin: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rules-card button:hover, .pause-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.start-btn, .resume-btn {
+    background: linear-gradient(90deg, #facc15 0%, #f97316 100%);
+    color: #1f2937;
+}
+
+.skip-btn {
+    background: linear-gradient(90deg, #6b21a8 0%, #2d0751 100%);
+    color: #ffffff;
+}
+
+.restart-btn {
+    background: linear-gradient(90deg, #facc15 0%, #f97316 100%);
+    color: #1f2937;
+}
+
+.exit-btn {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.dont-show-again {
+    margin-top: 15px;
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+}
+
+.dont-show-again input {
+    accent-color: #a855f7;
+}
+
+.countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.countdown-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 48px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 3D Dice SVG Icon Styles */
+.dice-3d-icon {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(20deg) rotateY(20deg);
+    transition: transform 0.3s ease;
+}
+
+.dice-3d-icon:hover {
+    transform: rotateX(25deg) rotateY(25deg);
+}
+
+.dice-3d-icon .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #f0f0f0, #d0d0d0);
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.8),
+        0 2px 4px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: #333;
+}
+
+.dice-3d-icon .front  { transform: translateZ(12px); }
+.dice-3d-icon .back   { transform: translateZ(-12px) rotateY(180deg); }
+.dice-3d-icon .right  { transform: rotateY(90deg) translateZ(12px); }
+.dice-3d-icon .left   { transform: rotateY(-90deg) translateZ(12px); }
+.dice-3d-icon .top    { transform: rotateX(90deg) translateZ(12px); }
+.dice-3d-icon .bottom { transform: rotateX(-90deg) translateZ(12px); }
+
+.dice-3d-icon .dot {
+    width: 4px;
+    height: 4px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.dice-3d-icon .dot:nth-child(1) { top: 20%; left: 20%; }
+.dice-3d-icon .dot:nth-child(2) { top: 20%; right: 20%; }
+.dice-3d-icon .dot:nth-child(3) { bottom: 20%; left: 20%; }
+.dice-3d-icon .dot:nth-child(4) { bottom: 20%; right: 20%; }
+.dice-3d-icon .dot:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); }

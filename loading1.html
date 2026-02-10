@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHEMSAGA - Loading...</title>
+
+<link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+<style>
+  :root {
+  --logo-size: clamp(120px, 22vh, 260px);
+  --tile-size: clamp(22px, 7vw, 36px);
+  --tile-gap: clamp(6px, 2vw, 10px);
+  --text-size: clamp(0.95rem, 3.5vw, 1.25rem);
+}
+
+/* ===== BASE RESET ===== */
+html, body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== LOGO ===== */
+.logo-img {
+  height: 22vh;
+  max-width: 90vw;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7));
+  animation: logoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 8px #8f7a10); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 22px #ffd700); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 8px #8f7a10); }
+}
+
+/* ===== TILE BAR ===== */
+.element-bar {
+  display: flex;
+  gap: 10px;
+  margin: 28px 0;
+}
+
+/* ===== TILE ===== */
+.element {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #1e1e1e;
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.15),
+    inset 0 -2px 3px rgba(0,0,0,0.8),
+    0 4px 6px rgba(0,0,0,0.6);
+
+  transform: translateY(0);
+  transition: all 0.35s cubic-bezier(.22,1,.36,1);
+}
+
+/* ACTIVE TILE */
+.element.active {
+  background: linear-gradient(145deg, #ffd700, #ff8c00);
+  border-color: rgba(255,215,0,0.9);
+  transform: translateY(-6px) scale(1.15);
+
+  box-shadow:
+    0 0 16px rgba(255,215,0,0.85),
+    0 10px 18px rgba(0,0,0,0.85),
+    inset 0 1px 2px rgba(255,255,255,0.6);
+}
+
+/* ===== LOADING TEXT ===== */
+#message {
+  margin-top: 20px;
+  font-size: 1.25em;
+  letter-spacing: 1px;
+  color: #add8e6;
+  animation: textPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes textPulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* ===== ELEMENT LABEL ===== */
+.ne-label {
+  position: absolute;
+  bottom: 18px;
+  right: 20px;
+  font-size: 1.8em;
+  font-weight: bold;
+  opacity: 0.7;
+  color: #add8e6;
+}
+
+@media (min-width: 1024px) {
+  .logo-img { height: 26vh; }
+}
+</style>
+</head>
+
+<body>
+
+<img src="./assets/img/c4.png"
+     onerror="this.src='https://picsum.photos/seed/logo/200'"
+     class="logo-img"
+     alt="CHEMSAGA Logo">
+
+<div class="element-bar">
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+  <div class="element"></div>
+</div>
+
+<p id="message">Initializing...</p>
+<span class="ne-label">Ne</span>
+
+<script>
+const elements = document.querySelectorAll('.element');
+const message = document.getElementById('message');
+let index = 0;
+
+function checkSession() {
+  fetch('../php/api/check_session.php', { credentials: 'include' })
+    .then(res => res.ok ? res.json() : Promise.reject())
+    .then(data => {
+      if (data.loggedIn) {
+        startTiles();
+      } else {
+        message.textContent = 'Session expired...';
+        setTimeout(() => location.href = 'scene2.html', 1000);
+      }
+    })
+    .catch(() => {
+      message.textContent = 'Redirecting...';
+      setTimeout(() => location.href = 'scene2.html', 1000);
+    });
+}
+
+function startTiles() {
+  const anim = setInterval(() => {
+    if (index < elements.length) {
+      elements[index].classList.add('active');
+      index++;
+    } else {
+      clearInterval(anim);
+      message.textContent = 'Loading Game Menu...';
+      setTimeout(() => location.href = 'scene2.html', 600);
+    }
+  }, 280);
+}
+
+checkSession();
+
+/* failsafe */
+setTimeout(() => location.href = 'scene2.html', 4200);
+</script>
+
+<script src="./assets/js/global-nocopypaste.js"></script>
+</body>
+</html>

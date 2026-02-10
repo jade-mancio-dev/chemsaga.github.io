@@ -1,0 +1,257 @@
+/* ============================================================
+   OPTIMIZED MOBILE PORTRAIT CSS (Lag-Free)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    /* Improves rendering performance on mobile browsers */
+    content-visibility: auto;
+  }
+
+  /* --- Header Section --- */
+  .main-header {
+    height: 50px;
+  }
+  .header-container {
+    padding: 4px;
+  }
+  .logo {
+    max-height: 40px;
+  }
+
+  /* --- Timer Section --- */
+  .game-timer-header {
+    width: 100%;
+    max-width: 420px;
+    font-size: 14px;
+    padding: 6px 10px;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    contain: layout; /* Optimization: Keeps layout shifts local */
+  }
+  .game-timer-header span {
+    font-size: 16px;
+  }
+
+  /* --- Main Wrapper --- */
+  .app-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    will-change: transform; /* Triggers GPU layer */
+  }
+
+  /* --- Grid Container --- */
+  .grid-container {
+    order: 1;
+    width: 94vw;
+    height: 94vw;
+    max-width: 420px;
+    max-height: 420px;
+    min-width: 0;
+    min-height: 0;
+    padding: 8px;
+    gap: 1px;
+    border-radius: 16px;
+    /* OPTIMIZED: Sharp shadow is 5x faster than large blur */
+    box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+    contain: paint; 
+  }
+
+  .symbol {
+    font-size: clamp(8px, 2.4vw, 12px);
+  }
+  .icon {
+    font-size: clamp(8px, 2.8vw, 14px);
+  }
+
+  /* --- Player Sidebar --- */
+  .player-sidebar {
+    order: 2;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 14px;
+    padding: 6px 8px;
+    min-height: auto;
+    background: rgba(0,0,0,0.9);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+    gap: 4px;
+    /* Forces smooth momentum scrolling on mobile */
+    -webkit-overflow-scrolling: touch; 
+  }
+
+  .sidebar-title,
+  .sidebar-sub {
+    font-size: 10px;
+    opacity: 0.9;
+  }
+
+  .player-list {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .player {
+    flex: 1 1 0;
+    height: auto;
+    padding: 5px;
+    border-radius: 8px;
+    border-width: 1px;
+    /* Optimization: Linear gradients are lighter than radial for GPUs */
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.9));
+  }
+
+  .player-left { gap: 5px; }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  .player-name {
+    font-size: 10px;
+  }
+  .score-card {
+    min-width: 32px;
+    padding: 3px 4px;
+    font-size: 10px;
+  }
+
+  .player.active {
+    outline-width: 2px;
+    /* Controlled shadow to avoid lag during active state swaps */
+    box-shadow: 0 4px 10px rgba(255,152,0,0.5);
+  }
+
+  /* --- Dice Section --- */
+  .dice-wrapper-mobile {
+    flex: 0 0 auto;
+    width: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    perspective: 1000px; /* Essential for 3D depth */
+  }
+
+  .dice-container {
+    position: static;
+    transform: none;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    gap: 2px;
+  }
+
+  .dice {
+    width: 40px;
+    height: 40px;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .face {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border-width: 2px;
+    position: absolute;
+    /* Optimization: Don't render the hidden side of the cube faces */
+    backface-visibility: hidden; 
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  /* GPU-Accelerated 3D Positioning */
+  .front  { transform: rotateY(0deg) translate3d(0, 0, 20px); }
+  .back   { transform: rotateX(180deg) translate3d(0, 0, 20px); }
+  .top    { transform: rotateX(90deg) translate3d(0, 0, 20px); }
+  .bottom { transform: rotateX(-90deg) translate3d(0, 0, 20px); }
+  .right  { transform: rotateY(90deg) translate3d(0, 0, 20px); }
+  .left   { transform: rotateY(-90deg) translate3d(0, 0, 20px); }
+
+  .roll {
+    display: none;
+  }
+
+  /* --- Timer UI --- */
+  .roll-timer-container {
+    position: absolute;
+    bottom: calc(40px + 6px);
+    left: 50%;
+    transform: translate3d(-50%, 0, 0); /* Optimized centering */
+    padding: 2px 6px;
+    min-width: 18px;
+    font-size: 9px;
+    line-height: 1;
+    border-radius: 6px;
+    border-width: 1px;
+    background: rgba(0,0,0,0.95);
+    border-color: rgb(255, 255, 255);
+    display: none;
+    color: #f84d4d;
+    text-align: center;
+    z-index: 5;
+    will-change: opacity;
+  }
+
+  .roll-timer-container.visible {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .roll-timer-container span {
+    font-size: 11px;
+    background: none;
+    color: #f84d4d;
+    text-shadow: none;
+    animation: pulseTimer 1s infinite;
+  }
+
+  /* --- Overlays --- */
+  .question-overlay {
+    padding: 10px;
+  }
+  .question-card {
+    width: 100%;
+    max-width: 360px;
+    padding: 18px;
+    contain: content;
+  }
+  .choices {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .grid-container {
+    width: 92vw;
+    height: 92vw;
+    max-width: 360px;
+    max-height: 360px;
+  }
+  .player-sidebar {
+    margin-top: 10px;
+  }
+}
+
+/* REDUCED MOTION SUPPORT */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

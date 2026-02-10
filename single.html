@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CHEMSAGA — Singleplayer Difficulty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/single.css" />
+  <link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+</head>
+<body>
+  <!-- Placeholder audio elements to prevent null errors -->
+  <audio id="backgroundMusic" loop>
+    <source src="./assets/audio/background.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="soundEffect">
+    <source src="./assets/audio/effect.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" aria-hidden="true">
+    <div class="settings-content" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <h2 id="settingsTitle" class="settings-title">SETTINGS</h2>
+        <button class="settings-close-btn" onclick="closeSettings()" aria-label="Close settings">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label">Background Music</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch">
+            <input type="checkbox" id="bgMusicToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <input id="bgMusicVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label">Sound Effects</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch">
+            <input type="checkbox" id="soundEffectsToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <input id="soundEffectsVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main-header">
+    <!-- Settings (left) -->
+    <div class="top-left-settings">
+      <button class="settings-button" onclick="openSettings()" aria-label="Open settings">
+        <i class="fa-solid fa-gear"></i>
+        <span class="settings-text">Settings</span>
+      </button>
+    </div>
+
+    <!-- Center Logo (click -> scene2) -->
+    <div class="logo-wrap">
+      <a href="scene2.html" class="logo-link" aria-label="Back to main menu">
+        <img src="./assets/img/c1.png" alt="CHEMSAGA Logo" class="logo">
+      </a>
+    </div>
+
+    <!-- Back (right) -->
+    <div class="top-right-back">
+      <button class="back-button" onclick="goBack()" aria-label="Go back">
+        <i class="fa-solid fa-reply"></i>
+        <span class="back-text">Back</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="app-wrapper">
+    <div class="page-title">
+      <i class="fa-solid fa-sliders"></i> Select Difficulty
+    </div>
+
+    <div class="difficulty-card" role="region" aria-label="Difficulty selector">
+      <div class="difficulty-list" aria-hidden="false">
+        <div>
+          <button class="difficulty-button" onclick="selectDifficulty('Easy')" aria-label="Select Easy difficulty">
+            Easy
+          </button>
+          <div class="difficulty-note">
+            Play against an AI with a 50% chance to answer correctly
+          </div>
+        </div>
+
+        <div>
+          <button class="difficulty-button" onclick="selectDifficulty('Normal')" aria-label="Select Normal difficulty">
+            Normal
+          </button>
+          <div class="difficulty-note">
+            Play against an AI with a 75% chance to answer correctly
+          </div>
+        </div>
+
+        <div>
+          <button class="difficulty-button" onclick="selectDifficulty('Hard')" aria-label="Select Hard difficulty">
+            Hard
+          </button>
+          <div class="difficulty-note">
+            Play against an AI with a 90% chance to answer correctly
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/music/bgmusic.js"></script>
+  <script src="assets/js/invite-socket.js"></script>
+  <script>
+    // Generic bootstrap: get profile to know the current user id, then init socket.
+    (async function(){
+      try{
+        const r = await fetch('../php/api/get_profile.php',{credentials:'include'});
+        const t = await r.text(); let d;
+        try{ d = JSON.parse(t); }catch{ d = {}; }
+        const uid = d?.user?.id || d?.user?.user_id || d?.user?.uid;
+        if (uid && window.InviteSocket) InviteSocket.init(uid);
+      }catch(e){}
+      async function poll(){
+        try{
+          const rr = await fetch('../php/invitations/list_pending.php',{credentials:'include',cache:'no-store'});
+          const jj = await rr.json();
+          if (jj?.ok && Array.isArray(jj.pending)) {
+            jj.pending.forEach(p => {
+              if (window.InviteSocket) InviteSocket.show({
+                invite_id: p.invite_id,
+                room_id: p.room_id,
+                from_user_id: p.from_user_id,
+                from_username: p.from_username,
+                from_avatar: p.from_avatar
+              });
+            });
+          }
+        }catch(e){}
+      }
+      setInterval(poll, 6000);
+    })();
+  </script>
+
+  <script src="./assets/js/single.js"></script>
+  <script>
+    // Background music frame
+    if (!window.parent || window.name !== "CHEMSAGA_MUSIC_FRAME") {
+      if (!window.top.frames['bgmusic-frame']) {
+        const iframe = document.createElement('iframe');
+        iframe.src = "assets/music/music-frame.html";
+        iframe.id = "bgmusic-frame";
+        iframe.name = "bgmusic-frame";
+        iframe.style.display = "none";
+        iframe.allow = "autoplay";
+        document.body.appendChild(iframe);
+      }
+    }
+
+    async function inviteUser(roomId, toUserId){
+      const fd = new FormData();
+      fd.append('room_id', roomId);
+      fd.append('to_user_id', toUserId);
+      const res = await fetch('../php/api/invitations/send.php', {
+        // ✅ fixed path
+        method:'POST',
+        body: fd,
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if(!data.ok){
+        if(data.error === 'cooldown'){
+          alert('Please wait ' + data.retry_after + 's before inviting again.');
+        } else if (data.error === 'target_in_other_room') {
+          alert('That player is already in another room.');
+        } else {
+          alert('Invite failed: ' + data.error);
+        }
+      }
+    }
+  </script>
+<script src="./assets/music/sfx.js"></script>
+  <script src="./assets/music/music-loader.js"></script>
+  <script src="./assets/js/global-nocopypaste.js"></script>
+
+</body>
+</html>

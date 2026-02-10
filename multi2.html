@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CHEMSAGA — Room</title>
+
+  <!-- Fonts / Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="./assets/css/multi2.css" />
+  <link rel="stylesheet" href="./assets/css/profile.css" />
+  <link rel="stylesheet" href="./assets/css/global-nocopypaste.css">
+
+
+  <style id="profile-modal-p1-fixes">
+  /* Mirror p1 modal look & grid */
+  #profileModal {
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 70%), rgba(49,3,96,0.3);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    display: none; justify-content: center; align-items: center; z-index: 1000;
+  }
+  .profile-card {
+    position: relative; width: 90%; max-width: 800px; max-height: 90vh;
+    background: linear-gradient(145deg, rgba(26,10,46,0.95), rgba(22,33,62,0.95)), radial-gradient(circle at 30% 30%, rgba(138,43,226,0.1) 0%, transparent 70%);
+    border: 2px solid rgba(138,43,226,0.3); border-radius: 20px; padding: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px); overflow-y: auto; -webkit-overflow-scrolling: touch;
+    font-family: 'Rajdhani', sans-serif; scrollbar-width: thin; scrollbar-color: rgba(162,104,255,0.9) rgba(0,0,0,0.12);
+  }
+  .profile-card::before {
+    content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 6px; border-radius: 6px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(138,43,226,0.18));
+    box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03); z-index: 8;
+  }
+  .profile-header {
+    position: sticky; top: 0; z-index: 9; padding-top: 10px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+    padding-bottom: 20px; border-bottom: 2px solid rgba(138,43,226,0.3);
+    background: linear-gradient(145deg, rgba(26,10,46,0.95), rgba(22,33,62,0.95)); backdrop-filter: blur(6px);
+  }
+  .profile-title { font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: 'Orbitron', sans-serif; line-height: 1.2; }
+  .close-btn { width: 36px; height: 28px; background: rgba(220,53,69,0.8); border: none; border-radius: 8px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .3s ease; box-shadow: 0 2px 8px rgba(220,53,69,0.3); }
+  .close-btn:hover { background: rgba(220,53,69,1); transform: scale(1.05); box-shadow: 0 5px 15px rgba(220,53,69,0.4); }
+
+  .profile-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .profile-section { background: rgba(0,0,0,0.3); border: 1px solid rgba(138,43,226,0.2); border-radius: 15px; padding: 25px; backdrop-filter: blur(10px); }
+  .section-title { font-size: 20px; font-weight: 700; color: rgba(138,43,226,1); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(138,43,226,0.3); padding-bottom: 10px; }
+
+  .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(138,43,226,0.8); box-shadow: 0 0 20px rgba(138,43,226,0.5); background-color: #1a0a2e; cursor: pointer; transition: transform .2s ease; }
+  .profile-avatar:hover { transform: scale(1.05); }
+  .profile-avatar-input { display: none; }
+
+  .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-bottom: none; }
+  .stat-label { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 600; }
+  .stat-value { font-size: 16px; color: rgba(138,43,226,1); font-weight: 700; }
+
+  .editable-input { background: rgba(0,0,0,0.5); border: 1px solid rgba(138,43,226,0.3); border-radius: 8px; padding: 10px; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 14px; width: 100%; margin-top: 5px; transition: all .3s ease; }
+  .editable-input:focus { outline: none; border-color: rgba(138,43,226,0.8); box-shadow: 0 0 10px rgba(138,43,226,0.3); }
+
+  .action-btn { padding: 15px; border: none; border-radius: 10px; font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all .3s ease; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; max-width: 250px; width: 100%; }
+  .logout-btn { background: linear-gradient(145deg, rgba(220,53,69,0.8), rgba(180,40,55,0.8)); color: white; border: 1px solid rgba(220,53,69,0.5); }
+
+  @media (max-width: 720px) {
+    .profile-content { grid-template-columns: 1fr; }
+    .profile-title { font-size: 24px; }
+    .close-btn { width: 32px; height: 24px; font-size: 14px; }
+  }
+</style>
+<style id="profile-avatar-change-overlay">
+  /* Container para sa avatar – kailangan para sa overlay text */
+  .profile-avatar-container {
+    position: relative;
+    display: inline-block;
+  }
+  /* Cursor at subtle hover scale (optional, same as p1) */
+  .profile-avatar {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .profile-avatar:hover {
+    transform: scale(1.05);
+  }
+  /* Ito ang “Change” overlay text sa gitna ng bilog kapag hover */
+  .profile-avatar-container:hover::after {
+    content: 'Change';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    pointer-events: none; /* para click-through sa image */
+  }
+  /* Siguraduhin ding nakatago ang file input */
+  .profile-avatar-input {
+    display: none;
+  }
+</style>
+
+
+  <style>
+    .no-access-overlay {
+      position: absolute; inset: 44px 8px 8px 8px;
+      border-radius: 10px; background: rgba(0,0,0,.55);
+      border: 1px dashed rgba(255,255,255,.25);
+      color: rgba(255,255,255,.9); display: none;
+      align-items: center; justify-content: center; font-weight: 800; gap: 8px;
+      z-index: 5;
+    }
+    #playersList .player .btn { transition: opacity 0.25s ease-in-out; }
+  </style>
+</head>
+
+<body>
+  <!-- Settings Modal -->
+  <div id="settingsModal" aria-hidden="true">
+    <div class="settings-content" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <h2 id="settingsTitle" class="settings-title">SETTINGS</h2>
+        <button class="settings-close-btn" onclick="closeSettings()" aria-label="Close settings">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label"> Background Music</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch"><input type="checkbox" id="bgMusicToggle" checked><span class="toggle-slider"></span></label>
+          <input id="bgMusicVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+      <div class="settings-item">
+        <span class="settings-label"> Sound Effects</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label class="toggle-switch"><input type="checkbox" id="soundEffectsToggle" checked><span class="toggle-slider"></span></label>
+          <input id="soundEffectsVolume" class="volume-slider" type="range" min="0" max="100" value="50">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PROFILE MODAL (p1-style) ===================== -->
+  <div id="profileModal" aria-hidden="true" style="display:none;">
+    <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="profile-header">
+        <h2 id="profileTitle" class="profile-title">PLAYER PROFILE</h2>
+        <button class="close-btn" onclick="closeProfile()" aria-label="Close profile">✖</button>
+      </div>
+
+      <div class="profile-content">
+        <!-- Profile -->
+        <div class="profile-section">
+          <h3 class="section-title">Profile</h3>
+          <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+            <div class="profile-avatar-container">
+              <img id="profileAvatar" src="./assets/img/c4.png" alt="Profile" class="profile-avatar">
+              <input id="profileAvatarInput" class="profile-avatar-input" name="profile_picture" type="file" accept="image/jpeg,image/png">
+            </div>
+            <div class="profile-details">
+              <h3 id="profileUsername" style="margin:0 0 6px 0;font-size:20px;">Loading...</h3>
+              <p id="profileUid" style="margin:0;color:rgba(255,255,255,0.7);">UID : Loading</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Points</span>
+            <span id="profilePoints" class="stat-value">Loading...</span>
+          </div>
+        </div>
+
+        
+
+        <!-- Records -->
+        <div class="profile-section">
+          <h3 class="section-title">Records</h3>
+          <div id="recordsList"></div>
+        </div>
+
+        <!-- Account -->
+        <div class="profile-section">
+          <h3 class="section-title">Account</h3>
+          <form id="updateProfileForm" enctype="multipart/form-data">
+            <input type="hidden" name="update_type" value="profile">
+            <div class="stat-item">
+              <span class="stat-label">Email</span>
+              <input class="editable-input" id="profileEmail" name="email" type="email" value="Loading...">
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Username</span>
+              <input class="editable-input" id="profileUsernameInput" name="username" type="text" value="Loading...">
+            </div>
+          </form>
+        </div>
+
+        <!-- Actions -->
+        <div style="grid-column:1/-1; display:flex; justify-content:center; align-items:center; margin-top:20px;">
+          <!-- Will be handled by JS to redirect to loading2.html on success -->
+          <form id="logoutForm" action="../php/api/logout.php" method="post">
+            <button class="action-btn logout-btn" type="submit">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =================== /PROFILE MODAL =================== -->
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="top-left-settings">
+      <div class="settings-button" onclick="openSettings()" role="button" aria-label="Open settings">
+        <i class="fa-solid fa-gear"></i> Settings
+      </div>
+      <div class="edit-button" onclick="editAction()" role="button" aria-label="Edit game room" id="editBtn">
+        <i class="fa-solid fa-pen-to-square"></i> Edit
+      </div>
+      <div class="lobby-button" onclick="goToLobby()" role="button" aria-label="Go to lobby">
+        <i class="fa-solid fa-door-open"></i> Lobby
+      </div>
+    </div>
+
+    <img src="./assets/img/c1.png" alt="CHEMSAGA Logo" class="logo">
+
+    <div class="top-right-back">
+      <div class="back-button" onclick="openBackModal()" role="button" aria-label="Go back">
+        <i class="fa-solid fa-reply"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="app-wrapper">
+    <div class="left-card" role="region" aria-label="Game room configuration and players">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <i class="fa-solid fa-door-closed"></i>
+          <span id="roomTitle" class="room-name-display">Room</span>
+        </div>
+        <small id="roomMeta" class="room-status" style="opacity:.8">Loading…</small>
+      </div>
+
+      <div style="font-size:12px;opacity:.85;margin:-6px 0 10px 2px;">
+        <span id="roomIdBadge">ID: —</span> •
+        <span id="roomVisibilityBadge">Visibility: —</span>
+      </div>
+
+      <div class="left-columns">
+        <div class="mode-area" id="modeArea" style="position:relative;">
+          <div class="card-header"><i class="fa-solid fa-gamepad"></i> Modes</div>
+
+          <div class="mode-viewport" id="modeViewport">
+            <button class="nav-btn nav-left host-only" id="navLeft" aria-label="Previous">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="modes" id="modesRow" aria-hidden="false"></div>
+            <button class="nav-btn nav-right host-only" id="navRight" aria-label="Next">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="time-set-area">
+            <input type="number" class="time-input host-only" placeholder="Time per q (s)" min="1" step="1" aria-label="Set time per question in seconds">
+          </div>
+          <div class="time-set-area">
+            <input type="number" class="time-input host-only" placeholder="Game time (min)" min="1" step="1" aria-label="Set game time in minutes">
+          </div>
+          <div class="quiz-type-area">
+            <select class="quiz-type-select host-only" aria-label="Select quiz type">
+              <option value="multiple-choice">Multiple Choice</option>
+              <option value="true-false">True/False</option>
+              <option value="mix">Mix</option>
+            </select>
+          </div>
+
+          <button class="start-btn host-only" id="startBtn" onclick="startGame()" role="button" aria-label="Start the game">Start Game</button>
+
+          <div class="no-access-overlay" id="noAccessOverlay" aria-hidden="true">
+            <i class="fa-solid fa-lock"></i> Host controls only
+          </div>
+        </div>
+
+        <div class="panel-area">
+          <div class="card-header"><i class="fa-solid fa-user"></i> Players</div>
+          <div class="panel-body-left">
+            <div class="panel-panel-left">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+                <div style="font-weight:700">Players</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.8)">Joined: <span id="invitedPlayerCount">0</span></div>
+              </div>
+              <div class="players-list" id="playersListLeft"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="right-card" role="region" aria-label="Social and Profile">
+      <!-- Profile chip -->
+      <div class="profile-slot" id="profileToggle" role="button" aria-haspopup="dialog" aria-controls="profileModal" title="Open profile" onclick="openProfile()">
+        <img src="./assets/img/c4.png" alt="Avatar" class="profile-pic" id="rightProfilePic">
+        <div class="player-name" id="rightPlayerName">Loading...</div>
+      </div>
+
+      <div class="panel-body-right">
+        <div class="panel-panel" id="panelPlayers">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+            <div style="font-weight:700;">
+              <i class="fa-solid fa-user-group"></i> Online Players
+            </div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.8)">Online: <span id="onlineCount">0</span></div>
+          </div>
+          <div class="players-list" id="playersList"></div>
+        </div>
+
+        <div class="panel-panel" id="panelFriends" style="display:none">
+          <div style="font-weight:700;padding:8px 0">Friend List</div>
+          <div class="friends-list" id="friendsList"></div>
+        </div>
+
+        <div class="panel-panel" id="panelAdd" style="display:none">
+          <div style="font-weight:700;padding:8px 0">Add Friend</div>
+          <form class="addfriend-form" id="addFriendForm">
+            <input id="friendName" placeholder="Enter player name or ID" aria-label="Friend name">
+            <textarea id="friendMsg" placeholder="Optional message" rows="3"></textarea>
+            <div class="friend-actions">
+              <button type="button" class="btn" id="btnSendRequest">Send Request</button>
+              <button type="button" class="btn ghost" id="btnCancelRequest">Cancel</button>
+            </div>
+            <div id="addFriendFeedback" style="margin-top:8px;color:#ffd;display:none"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="social-card" aria-hidden="false">
+        <div class="title">
+          <div style="font-weight:800">Social</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8)">Online: <span id="onlineCountFooter">0</span></div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Social tabs">
+          <button class="tab-btn active" data-tab="players" id="tabPlayers">Players</button>
+          <button class="tab-btn" data-tab="friends" id="tabFriends">Friends</button>
+          <button class="tab-btn" data-tab="add" id="tabAdd">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Confirmation Modal -->
+  <div id="backModal" class="pop-modal" aria-hidden="true">
+    <div class="pop-card" role="dialog" aria-modal="true">
+      <div class="pop-header">
+        <h2 class="pop-title">DISBAND ROOM</h2>
+        <button class="pop-close" onclick="closeBackModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pop-body">
+        <p>Do you want to disband this room?</p>
+      </div>
+      <div class="pop-footer">
+        <button class="btn danger" onclick="confirmDisband()">Disband</button>
+        <button class="btn ghost" onclick="closeBackModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="./assets/music/bgmusic.js"></script>
+
+  <!-- Keep order: profile-display BEFORE multi2.js -->
+  <script src="./assets/js/profile-display.js" defer></script>
+  <script src="./assets/js/multi2.js" defer></script>
+  <script src="./assets/js/profile-guard.global.js"></script>
+
+
+  <!-- Bridge that makes the modal behave like p1.html (avatar upload, inline edit, logout redirect) -->
+  <script src="./assets/js/profile-bridge.js" defer></script>
+
+  <script>
+    // Utility: get current room ID from URL hints
+    function getCurrentRoomId() {
+      const qs = new URLSearchParams(window.location.search);
+      if (qs.get('room_id')) return qs.get('room_id');
+      if (qs.get('fromRoomId')) return qs.get('fromRoomId');
+      return null;
+    }
+
+    // Open Lobby btn
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('openLobbyBtn');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const rid = getCurrentRoomId();
+        window.location.href = rid ? ('lobby.html?fromRoomId=' + encodeURIComponent(rid)) : 'lobby.html';
+      });
+    });
+  </script>
+
+  <!-- === CHEMSAGA: Start/Redirect Glue (host-only UI, start, heartbeat redirect) === -->
+  <script>
+    const API_BASE    = '/Newchemsaga/php/api';
+    const PUBLIC_BASE = '/Newchemsaga/public';
+    let startRedirected = false;
+
+    async function setupHostUI() {
+      const room_id = getCurrentRoomId();
+      try {
+        const url = room_id ? `${API_BASE}/room_detail.php?room_id=${encodeURIComponent(room_id)}` : `${API_BASE}/room_detail.php?room_id=0`;
+        const r = await fetch(url, { cache: 'no-store' });
+        const j = await r.json();
+
+        const startBtn = document.getElementById('startBtn');
+        const overlay  = document.getElementById('noAccessOverlay');
+        const hostOnly = document.querySelectorAll('.host-only');
+
+        if (!j.ok) {
+          startBtn && (startBtn.style.display = 'none');
+          overlay && (overlay.style.display = 'flex');
+          hostOnly.forEach(el => { el.setAttribute('disabled','true'); el.style.pointerEvents='none'; el.style.opacity='.45'; });
+          return;
+        }
+
+        if (j.is_host) {
+          startBtn && (startBtn.style.display = 'inline-block');
+          overlay && (overlay.style.display = 'none');
+          hostOnly.forEach(el => { el.removeAttribute('disabled'); el.style.pointerEvents='auto'; el.style.opacity='1'; });
+        } else {
+          startBtn && (startBtn.style.display = 'none');
+          overlay && (overlay.style.display = 'flex');
+          hostOnly.forEach(el => { el.setAttribute('disabled','true'); el.style.pointerEvents='none'; el.style.opacity='.45'; });
+        }
+
+        // Reflect room meta
+        if (j.room && j.room.room_id) {
+          const meta    = document.getElementById('roomMeta');
+          const idBadge = document.getElementById('roomIdBadge');
+          const visBadge= document.getElementById('roomVisibilityBadge');
+          const title   = document.getElementById('roomTitle');
+          title   && (title.textContent   = j.room.title || `Room ${j.room.room_id}`);
+          meta    && (meta.textContent    = (j.room.status || 'open').toUpperCase());
+          idBadge && (idBadge.textContent = `ID: ${j.room.room_id}`);
+          visBadge&& (visBadge.textContent= `Visibility: ${j.room.visibility || 'public'}`);
+        }
+      } catch (e) {
+        // No-op: UI stays locked for safety
+      }
+    }
+
+    async function startGame() {
+      const btn = document.getElementById('startBtn');
+      try {
+        btn && (btn.disabled = true);
+        const r = await fetch(`${API_BASE}/start_game.php`, { method: 'POST' });
+        const j = await r.json();
+        if (!j.ok) {
+          alert('Start failed: ' + (j.error || 'unknown'));
+          btn && (btn.disabled = false);
+          return;
+        }
+        // Host jumps immediately
+        window.location.href = j.redirect || `${PUBLIC_BASE}/loading5.html?room_id=${j.room_id}&t=${j.session_token}`;
+      } catch (e) {
+        alert('Start failed: network_error');
+        btn && (btn.disabled = false);
+      }
+    }
+    window.startGame = startGame; // for inline onclick
+
+    async function pollRoomForStart() {
+      if (startRedirected) return;
+      const room_id = getCurrentRoomId();
+      try {
+        const hb = room_id ? `${API_BASE}/heartbeat_room.php?room_id=${encodeURIComponent(room_id)}` : `${API_BASE}/heartbeat_room.php`;
+        const r = await fetch(hb, { cache: 'no-store' });
+        const j = await r.json();
+        if (j.ok && j.status === 'in_progress' && j.session_token) {
+          startRedirected = true;
+          window.location.href = `${PUBLIC_BASE}/loading5.html?room_id=${j.room_id}&t=${j.session_token}`;
+        }
+      } catch (e) {
+        // Try again next tick
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupHostUI();
+      pollRoomForStart();
+      setInterval(pollRoomForStart, 1000);
+    });
+  </script>
+  <script src="./assets/music/sfx.js"></script>
+  <script src="./assets/music/music-loader.js"></script>
+  <script src="./assets/js/global-nocopypaste.js"></script>
+
+</body>
+</html>

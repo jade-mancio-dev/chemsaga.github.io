@@ -1,0 +1,27 @@
+/* ============================
+   CHEMSAGA - Global No Copy/Paste Styles
+   ============================ */
+
+/* Disable text selection globally */
+* {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Prevent image dragging */
+img {
+  -webkit-user-drag: none !important;
+  pointer-events: none;
+}
+
+/* Prevent text selection in input fields (optional) */
+input, textarea {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* Prevent long-press selection on mobile browsers */
+body {
+  -webkit-touch-callout: none !important;
+}
